@@ -1,36 +1,23 @@
-THE MAIN PCRE2 LIBRARY CODE
----------------------------
+THE MAIN PCRE LIBRARY
+---------------------
 
 Written by:       Philip Hazel
-Email local part: Philip.Hazel
-Email domain:     gmail.com
+Email local part: ph10
+Email domain:     cam.ac.uk
 
-Retired from University of Cambridge Computing Service,
+University of Cambridge Computing Service,
 Cambridge, England.
 
-Copyright (c) 1997-2022 University of Cambridge
+Copyright (c) 1997-2008 University of Cambridge
 All rights reserved
 
 
-PCRE2 JUST-IN-TIME COMPILATION SUPPORT
---------------------------------------
+THE C++ WRAPPER LIBRARY
+-----------------------
 
-Written by:       Zoltan Herczeg
-Email local part: hzmester
-Emain domain:     freemail.hu
+Written by:       Google Inc.
 
-Copyright(c) 2010-2022 Zoltan Herczeg
-All rights reserved.
-
-
-STACK-LESS JUST-IN-TIME COMPILER
---------------------------------
-
-Written by:       Zoltan Herczeg
-Email local part: hzmester
-Emain domain:     freemail.hu
-
-Copyright(c) 2009-2022 Zoltan Herczeg
-All rights reserved.
+Copyright (c) 2007-2008 Google Inc
+All rights reserved
 
 ####

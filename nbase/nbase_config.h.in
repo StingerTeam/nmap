@@ -60,7 +60,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: nbase_config.h.in 38653 2023-04-14 17:11:46Z dmiller $ */
 #ifndef NBASE_CONFIG_H
 #define NBASE_CONFIG_H
 
@@ -188,6 +188,8 @@
 
 /* define if your compiler has __attribute__ */
 #undef HAVE___ATTRIBUTE__
+
+#undef HAVE_OPENSSL
 
 #undef HAVE_PROC_SELF_EXE
 

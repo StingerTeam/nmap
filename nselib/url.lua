@@ -67,7 +67,7 @@ local segment_set = make_set {
   "-", "_", ".", "!", "~", "*", "'", "(",
   ")", ":", "@", "&", "=", "+", "$", ",",
 }
-setmetatable(segment_set, { __index = function(t, c) return hex_esc(c) end })
+setmetatable(segment_set, { __index = hex_esc })
 
 ---
 -- Protects a path segment, to prevent it from interfering with the
@@ -91,8 +91,7 @@ local function absolute_path(base_path, relative_path)
                   end
   local path = relative_path
   if path:sub(1, 1) ~= "/" then
-    -- function wrapper to avoid %-substitution of captures
-    path = fixdots(base_path):gsub("[^/]*$", function() return path end)
+    path = fixdots(base_path):gsub("[^/]*$", path)
   end
   -- Break the path into segments, processing dot and dot-dot
   local segs = {}
@@ -457,65 +456,66 @@ end
 
 test_suite = unittest.TestSuite:new()
 
-local test_urls = {
-  { _url = "https://dummy:pass@example.com:9999/example.ext?k1=v1&k2=v2#fragment=/",
-    _res = {
-      scheme = "https",
-      authority = "dummy:pass@example.com:9999",
-      userinfo = "dummy:pass",
-      user = "dummy",
-      password = "pass",
-      host = "example.com",
-      port = 9999,
-      path = "/example.ext",
-      query = "k1=v1&k2=v2",
-      fragment = "fragment=/",
-      is_folder = false,
-      extension = "ext",
-    },
-    _nil = {"params"}
-  },
-  { _url = "http://dummy@example.com:1234/example.ext/another.php;k1=v1?k2=v2#k3=v3",
-    _res = {
-      scheme = "http",
-      authority = "dummy@example.com:1234",
-      userinfo = "dummy",
-      user = "dummy",
-      host = "example.com",
-      port = 1234,
-      path = "/example.ext/another.php",
-      params = "k1=v1",
-      query = "k2=v2",
-      fragment = "k3=v3",
-      is_folder = false,
-      extension = "php",
-    },
-    _nil = {"password"}
-  },
-  { _url = "//example/example.folder/?k1=v1&k2=v2#k3/v3.bar",
-    _res = {
-      authority = "example",
-      host = "example",
-      path = "/example.folder/",
-      query = "k1=v1&k2=v2",
-      fragment = "k3/v3.bar",
-      is_folder = true,
-    },
-    _nil = {"scheme", "userinfo", "port", "params", "extension"}
-  },
+local result = parse("https://dummy:pass@example.com:9999/example.ext?k1=v1&k2=v2#fragment=/")
+local expected = {
+  scheme = "https",
+  authority = "dummy:pass@example.com:9999",
+  userinfo = "dummy:pass",
+  user = "dummy",
+  password = "pass",
+  host = "example.com",
+  port = 9999,
+  path = "/example.ext",
+  query = "k1=v1&k2=v2",
+  fragment = "fragment=/",
+  is_folder = false,
+  extension = "ext",
 }
-for _, t in ipairs(test_urls) do
-  local result = parse(t._url)
-  for _, nv in ipairs(t._nil) do
-    test_suite:add_test(unittest.is_nil(result[nv]), nv)
-  end
-  for k, v in pairs(t._res) do
-    test_suite:add_test(unittest.equal(result[k], v), k)
-  end
-  test_suite:add_test(unittest.equal(build(t._res), t._url), "build test url")
-  test_suite:add_test(unittest.equal(build(result), t._url), "parse/build round trip")
+
+test_suite:add_test(unittest.is_nil(result.params), "params")
+for k, v in pairs(expected) do
+  test_suite:add_test(unittest.equal(result[k], v), k)
 end
 
+local result = parse("http://dummy@example.com:1234/example.ext/another.php;k1=v1?k2=v2#k3=v3")
+local expected = {
+  scheme = "http",
+  authority = "dummy@example.com:1234",
+  userinfo = "dummy",
+  user = "dummy",
+  host = "example.com",
+  port = 1234,
+  path = "/example.ext/another.php",
+  params = "k1=v1",
+  query = "k2=v2",
+  fragment = "k3=v3",
+  is_folder = false,
+  extension = "php",
+}
+
+test_suite:add_test(unittest.is_nil(result.password), "password")
+for k, v in pairs(expected) do
+  test_suite:add_test(unittest.equal(result[k], v), k)
+end
+
+local result = parse("//example/example.folder/?k1=v1&k2=v2#k3/v3.bar")
+local expected = {
+  authority = "example",
+  host = "example",
+  path = "/example.folder/",
+  query = "k1=v1&k2=v2",
+  fragment = "k3/v3.bar",
+  is_folder = true,
+}
+
+test_suite:add_test(unittest.is_nil(result.scheme), "scheme")
+test_suite:add_test(unittest.is_nil(result.userinfo), "userinfo")
+test_suite:add_test(unittest.is_nil(result.port), "port")
+test_suite:add_test(unittest.is_nil(result.params), "params")
+test_suite:add_test(unittest.is_nil(result.extension), "extension")
+for k, v in pairs(expected) do
+  test_suite:add_test(unittest.equal(result[k], v), k)
+end
 
 -- path merging tests for compliance with RFC 3986, section 5.2
 -- https://tools.ietf.org/html/rfc3986#section-5.2

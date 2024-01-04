@@ -49,7 +49,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: nsock_pcap.c 38653 2023-04-14 17:11:46Z dmiller $ */
 
 #include "nsock.h"
 #include "nsock_internal.h"
@@ -117,10 +117,11 @@ static int nsock_pcap_set_filter(struct npool *nsp, pcap_t *pt, const char *devi
   rc = pcap_setfilter(pt, &fcode);
   if (rc) {
     nsock_log_error("Failed to set the pcap filter: %s", pcap_geterr(pt));
+    return rc;
   }
 
   pcap_freecode(&fcode);
-  return rc;
+  return 0;
 }
 
 static int nsock_pcap_get_l3_offset(pcap_t *pt, int *dl) {

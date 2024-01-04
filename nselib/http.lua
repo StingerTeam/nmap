@@ -157,7 +157,7 @@ local have_ssl, openssl = pcall(require,'openssl')
 --Use zlib if we have it
 local have_zlib, zlib = pcall(require,'zlib')
 
-USER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (compatible; Nmap Scripting Engine; https://nmap.org/book/nse.html)"
+USER_AGENT = stdnse.get_script_args('http.useragent') or "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.0.0"
 local host_header = stdnse.get_script_args('http.host')
 local MAX_REDIRECT_COUNT = 5
 local MAX_BODY_SIZE = tonumber(stdnse.get_script_args('http.max-body-size')) or 2*1024*1024
@@ -1993,7 +1993,7 @@ function pipeline_go(host, port, all_requests)
     stdnse.debug1("Warning: empty set of requests passed to http.pipeline_go()")
     return responses
   end
-  stdnse.debug1("HTTP pipeline: Total number of requests: %d", #all_requests)
+  stdnse.debug1("HTTP pipeline: Total number of requests: " .. #all_requests)
 
   -- We'll try a first request with keep-alive, just to check if the server
   -- supports it and how many requests we can send into one socket

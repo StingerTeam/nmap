@@ -58,7 +58,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: nmap.cc 38669 2023-05-09 14:16:46Z dmiller $ */
 
 #ifdef WIN32
 #include "winfix.h"
@@ -205,7 +205,7 @@ static void printusage() {
          "  -sL: List Scan - simply list targets to scan\n"
          "  -sn: Ping Scan - disable port scan\n"
          "  -Pn: Treat all hosts as online -- skip host discovery\n"
-         "  -PS/PA/PU/PY[portlist]: TCP SYN, TCP ACK, UDP or SCTP discovery to given ports\n"
+         "  -PS/PA/PU/PY[portlist]: TCP SYN/ACK, UDP or SCTP discovery to given ports\n"
          "  -PE/PP/PM: ICMP echo, timestamp, and netmask request discovery probes\n"
          "  -PO[protocol list]: IP Protocol Ping\n"
          "  -n/-R: Never do DNS resolution/Always resolve [default: sometimes]\n"
@@ -390,18 +390,6 @@ void validate_scan_lists(scan_lists &vports, NmapOps &vo) {
     }
   }
 
-  if (!vo.isr00t) {
-    if (vo.pingtype & (PINGTYPE_ICMP_PING | PINGTYPE_ICMP_MASK | PINGTYPE_ICMP_TS)) {
-      error("Warning:  You are not root -- using TCP pingscan rather than ICMP");
-      vo.pingtype &= ~(PINGTYPE_ICMP_PING | PINGTYPE_ICMP_MASK | PINGTYPE_ICMP_TS);
-      vo.pingtype |= PINGTYPE_TCP;
-      if (vports.syn_ping_count == 0) {
-        getpts_simple(DEFAULT_TCP_PROBE_PORT_SPEC, SCAN_TCP_PORT, &vports.syn_ping_ports, &vports.syn_ping_count);
-        assert(vports.syn_ping_count > 0);
-      }
-    }
-  }
-
   if ((vo.pingtype & PINGTYPE_TCP) && (!vo.isr00t)) {
     // We will have to do a connect() style ping
     // Pretend we wanted SYN probes all along.
@@ -429,6 +417,16 @@ void validate_scan_lists(scan_lists &vports, NmapOps &vo) {
     vo.pingtype |= PINGTYPE_TCP_USE_SYN;
   }
 
+  if (!vo.isr00t) {
+    if (vo.pingtype & (PINGTYPE_ICMP_PING | PINGTYPE_ICMP_MASK | PINGTYPE_ICMP_TS)) {
+      error("Warning:  You are not root -- using TCP pingscan rather than ICMP");
+      vo.pingtype = PINGTYPE_TCP;
+      if (vports.syn_ping_count == 0) {
+        getpts_simple(DEFAULT_TCP_PROBE_PORT_SPEC, SCAN_TCP_PORT, &vports.syn_ping_ports, &vports.syn_ping_count);
+        assert(vports.syn_ping_count > 0);
+      }
+    }
+  }
 }
 
 struct ftpinfo ftp = get_default_ftpinfo();
@@ -1996,8 +1994,8 @@ int nmap_main(int argc, char *argv[]) {
                                SIGPIPE */
 #endif
 
-  if (o.max_parallelism && (i = max_sd()) > 0 && i < o.max_parallelism) {
-    error("WARNING: max_parallelism is %d, but your system says it might only give us %d sockets.  Trying anyway", o.max_parallelism, i);
+  if (o.max_parallelism && (i = max_sd()) && i < o.max_parallelism) {
+    error("WARNING: Your specified max_parallel_sockets of %d, but your system says it might only give us %d.  Trying anyway", o.max_parallelism, i);
   }
 
   if (o.debugging > 1)
@@ -2805,12 +2803,10 @@ static void display_nmap_version() {
   without.push_back("libz");
 #endif
 
-  char pcre2_version[255];
-  pcre2_config(PCRE2_CONFIG_VERSION, pcre2_version);
 #ifdef PCRE_INCLUDED
-  with.push_back(std::string("nmap-libpcre2-") + get_word_or_quote(pcre2_version, 0));
+  with.push_back(std::string("nmap-libpcre-") + get_word_or_quote(pcre_version(), 0));
 #else
-  with.push_back(std::string("libpcre2-") + get_word_or_quote(pcre2_version, 0));
+  with.push_back(std::string("libpcre-") + get_word_or_quote(pcre_version(), 0));
 #endif
 
 #ifdef WIN32

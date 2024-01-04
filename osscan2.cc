@@ -59,7 +59,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: osscan2.cc 38653 2023-04-14 17:11:46Z dmiller $ */
 
 #include "osscan.h"
 #include "osscan2.h"
@@ -2122,7 +2122,7 @@ int HostOsScan::send_icmp_echo_probe(HostOsScanStats *hss,
 int HostOsScan::send_closedudp_probe(HostOsScanStats *hss,
                                      int ttl, u16 sport, u16 dport) {
   static int myttl = 0;
-  static u8 patternbyte = 0x43; /* character 'C' */
+  static u8 patternbyte = 0x23; /* character '#' */
   static u16 id = 0x1042;
   u8 packet[328]; /* 20 IP hdr + 8 UDP hdr + 300 data */
   struct ip *ip = (struct ip *) packet;
@@ -2138,7 +2138,8 @@ int HostOsScan::send_closedudp_probe(HostOsScanStats *hss,
   ethptr = hss->fill_eth_nfo(&eth, ethsd);
 
   /* if (!patternbyte) patternbyte = (get_random_uint() % 60) + 65; */
-  memset(data, patternbyte, datalen);
+  get_random_bytes(data, datalen);
+  // memset(data, patternbyte, datalen);
 
   /*  while (!id) id = get_random_uint(); */
 

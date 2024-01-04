@@ -527,7 +527,7 @@ Request = {
     setmetatable(o, self)
     self.__index = self
 
-    o.ua = "Nmap NSE"
+    o.ua = "FreeSWITCH-mod_sofia"
     o.protocol = proto or "UDP"
     o.expires = 0
     o.allow = "PRACK, INVITE ,ACK, BYE, CANCEL, UPDATE, SUBSCRIBE"

@@ -58,7 +58,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: strcasecmp.c 38653 2023-04-14 17:11:46Z dmiller $ */
 
 #if !defined(HAVE_STRCASECMP) || !defined(HAVE_STRNCASECMP)
 #include <stdlib.h>

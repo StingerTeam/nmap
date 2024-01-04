@@ -58,7 +58,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: services.h 38653 2023-04-14 17:11:46Z dmiller $ */
 
 
 #ifndef SERVICES_H
@@ -69,7 +69,7 @@
 struct nservent {
   const char *s_name;
   const char *s_proto;
-  u16 s_port;
+  short s_port;
 };
 
 int addportsfromservmask(const char *mask, u8 *porttbl, int range_type);

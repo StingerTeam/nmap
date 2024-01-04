@@ -55,7 +55,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: nbase_addrset.c 38653 2023-04-14 17:11:46Z dmiller $ */
 
 /* The code in this file has tests in the file ncat/tests/test-addrset.sh. Run that
    program after making any big changes. Also, please add tests for any new
@@ -319,7 +319,7 @@ static void trie_split (struct trie_node *this, const u32 *addr, const u32 *mask
       break;
     }
   }
-  if (i >= 4 || new_mask[i] >= this->mask[i]) {
+  if (new_mask[i] >= this->mask[i]) {
     /* This node completely contains the new addr and mask. No need to split or add */
     return;
   }

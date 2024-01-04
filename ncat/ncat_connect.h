@@ -55,7 +55,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: ncat_connect.h 38653 2023-04-14 17:11:46Z dmiller $ */
 #ifndef NCAT_CONNECT_H
 #define NCAT_CONNECT_H
 

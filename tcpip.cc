@@ -59,7 +59,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: tcpip.cc 38653 2023-04-14 17:11:46Z dmiller $ */
 
 #include "nmap.h"
 
@@ -669,7 +669,7 @@ static u8 *build_tcp(u16 sport, u16 dport, u32 seq, u32 ack, u8 reserved,
   if (window)
     tcp->th_win = htons(window);
   else
-    tcp->th_win = htons(1024); /* Who cares */
+    tcp->th_win = htons(2048); /* Who cares */
 
   if (urp)
     tcp->th_urp = htons(urp);

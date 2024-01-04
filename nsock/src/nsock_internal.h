@@ -50,7 +50,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: nsock_internal.h 38653 2023-04-14 17:11:46Z dmiller $ */
 
 #ifndef NSOCK_INTERNAL_H
 #define NSOCK_INTERNAL_H

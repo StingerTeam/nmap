@@ -57,7 +57,7 @@
  *
  ***************************************************************************/
 
-/* $Id$ */
+/* $Id: portlist.cc 38653 2023-04-14 17:11:46Z dmiller $ */
 
 
 #include "nmap.h"
@@ -67,7 +67,6 @@
 #include "services.h"
 #include "protocols.h"
 #include "tcpip.h"
-#include "string_pool.h"
 #include "libnetutil/netutil.h"
 
 #if HAVE_STRINGS_H
@@ -348,7 +347,7 @@ void PortList::setServiceProbeResults(u16 portno, int protocol,
   port->service->service_tunnel = tunnel;
 
   if (sname)
-    port->service->name = string_pool_insert(sname);
+    port->service->name = sname;
   else
     port->service->name = NULL;
 
